@@ -1,0 +1,63 @@
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Author } from './entities/author.entity';
+import { AuthorRepository } from './author.repository';
+import { CreateAuthorDto } from './dtos/create-author.dto';
+import { AuthorDto } from './dtos/author.dto';
+import { UpdateAuthorDto } from './dtos/update-author.dto';
+import { In } from 'typeorm';
+
+@Injectable()
+export class AuthorService {
+  constructor(private readonly authorRepository: AuthorRepository) {}
+
+  async findAll(): Promise<AuthorDto[]> {
+    return await this.authorRepository.getAllAuthors();
+  }
+
+  async findOne(id: number): Promise<AuthorDto> {
+    return await this.authorRepository.getAuthorById(id);
+  }
+  
+  async findOneByCPF(cpf: string): Promise<Author | undefined> {
+    return this.authorRepository.findOne({ where: { cpf }, relations: ['books'] });
+  }
+
+  async findByIds(ids: number[]): Promise<Author[]> {
+    return await this.authorRepository.findBy({ id: In(ids) })
+  }
+
+  async create(createAuthorDto: CreateAuthorDto): Promise<AuthorDto> {
+    createAuthorDto.cpf = createAuthorDto.cpf.replace(/[^\d]+/g, '');
+
+    await this.validateCpf(createAuthorDto.cpf);
+
+    return this.authorRepository.createAuthor(createAuthorDto);
+  }
+
+  async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<AuthorDto> {
+    const author = await this.authorRepository.getAuthorById(id);
+    updateAuthorDto.cpf = updateAuthorDto.cpf.replace(/[^\d]+/g, '');
+
+    if(updateAuthorDto.cpf) {
+      await this.validateCpf(updateAuthorDto.cpf);
+    }
+
+    const updatedAuthor = Object.assign(author, updateAuthorDto);
+
+    return await this.authorRepository.updateAuthor(updatedAuthor);
+  }
+
+  async remove(id: number): Promise<void> {
+	  await this.authorRepository.getAuthorById(id);
+
+    await this.authorRepository.delete(id);
+  }
+
+  async validateCpf(cpf: string): Promise<void> {
+    const author = await this.findOneByCPF(cpf);
+    if (author) {
+      throw new ConflictException(`Já existe um autor cadastrado para o CPF '${cpf}'`);
+    }
+  }
+}
