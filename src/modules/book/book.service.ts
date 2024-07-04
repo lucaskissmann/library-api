@@ -1,6 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Book } from './entities/book.entity';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { BookRepository } from './book.repository';
 import { CreateBookDto } from './dtos/create-book.dto';
 import { UpdateBookDto } from './dtos/update-book.dto';
@@ -23,6 +21,10 @@ export class BookService {
   }
 
   async create(createBookDto: CreateBookDto): Promise<BookDto> {
+    createBookDto.isbn = createBookDto.isbn.replace(/[^\d]+/g, '');
+
+    await this.validateISBN(createBookDto.isbn);
+
     const { authorsIds, ...bookData } = createBookDto;
 
     const authors = await this.authorService.findByIds(createBookDto.authorsIds);
@@ -41,13 +43,17 @@ export class BookService {
   }
 
   async update(id: number, updateBookDto: UpdateBookDto): Promise<BookDto> {
-    await this.bookRepository.getBookById(id);
+    const book = await this.bookRepository.getBookById(id);
 
-    const bookEntity = plainToClass(Book, updateBookDto);
+    if(updateBookDto.isbn) {
+      updateBookDto.isbn = updateBookDto.isbn.replace(/[^\d]+/g, '');
 
-    const updatedBook = await this.bookRepository.save(bookEntity);
+      await this.validateISBN(updateBookDto.isbn, id);
+    }
 
-    return plainToClass(BookDto, updatedBook);
+    const updatedBook = Object.assign(book, updateBookDto);
+
+    return await this.bookRepository.updateBook(updatedBook);
   }
 
   async remove(id: number): Promise<void> {
@@ -55,4 +61,11 @@ export class BookService {
 
     await this.bookRepository.delete(id);
   }
+
+  async validateISBN(isbn: string, id?: number): Promise<void> {
+    const book = await this.bookRepository.findOne({ where: { isbn } });
+    if (book && id && book.id != id) {
+      throw new ConflictException(`O ISBN ${isbn} já está cadastrado para o livro ${book.title}`);
+    }
+  } 
 }

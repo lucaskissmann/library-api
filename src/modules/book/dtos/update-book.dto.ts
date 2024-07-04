@@ -1,5 +1,6 @@
 import { ArrayMinSize, IsArray, IsDateString, IsInt, IsOptional, IsString, Validate } from "class-validator";
 import { IsValidBookState } from "src/v1/validators/isValidBookState";
+import { IsValidISBN } from "src/v1/validators/isValidISBN.constraint";
 
 export class UpdateBookDto {
     @IsString()
@@ -8,6 +9,7 @@ export class UpdateBookDto {
 
     @IsString()
     @IsOptional()
+    @Validate(IsValidISBN)
     isbn: string;
 
     @IsDateString()
@@ -21,7 +23,7 @@ export class UpdateBookDto {
     authorsIds: number[];
 
     @IsOptional()
-    @IsString()
+    @IsInt()
     @Validate(IsValidBookState)
-    state?: string;
+    state?: number;
 }

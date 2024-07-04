@@ -1,5 +1,7 @@
-import { IsDate, IsInt, IsNotEmpty, IsString } from "class-validator";
+import { IsDate, IsInt, IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
 import { BookState } from "../enums/book.enum";
+import { Type } from "class-transformer";
+import { Author } from "src/modules/author/entities/author.entity";
 
 export class BookDto {
     @IsInt()
@@ -17,8 +19,10 @@ export class BookDto {
     @IsDate()
     publicationDate: Date;
 
-    @IsInt()
-    authorId: number;
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => Author)
+    authors: Author[];
 
     state: BookState;
 }

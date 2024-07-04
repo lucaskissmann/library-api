@@ -6,6 +6,7 @@ import { plainToClass } from 'class-transformer';
 import { NotFoundException } from '@nestjs/common';
 import { CreateBookDto } from './dtos/create-book.dto';
 import { UpdateBookDto } from './dtos/update-book.dto';
+import { AuthorDto } from '../author/dtos/author.dto';
 
 export class BookRepository extends Repository<Book> {
   constructor(
@@ -20,8 +21,11 @@ export class BookRepository extends Repository<Book> {
   }
 
   async getAllBooks(): Promise<BookDto[]> {
-    const books = await this.bookRepository.find();
-    return books.map(book => plainToClass(BookDto, book));
+    const books = await this.bookRepository.find({relations: ['authors'] });
+    return books.map(book => plainToClass(BookDto, {
+      ...book,
+      authors: book.authors.map(author => plainToClass(AuthorDto, author)),
+    }));
   }
 
   async getBookById(id: number) {
@@ -42,9 +46,9 @@ export class BookRepository extends Repository<Book> {
     const savedBook = await this.bookRepository.save(bookEntity);
     return plainToClass(BookDto, savedBook);
   }
-
-  // async updateBook(updateBookDto: UpdateBookDto) {
-  //   const bookData = await this.bookRepository.save(updateBookDto);
-  //   return plainToClass(BookDto, bookData);
-  // }
+  
+  async updateBook(updateBookDto: UpdateBookDto) {
+    const bookData = await this.bookRepository.save(updateBookDto);
+    return plainToClass(BookDto, bookData);
+  }
 }
