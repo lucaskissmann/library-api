@@ -24,6 +24,19 @@ export class AuthorRepository extends Repository<Author> {
     return authors.map(book => plainToClass(AuthorDto, book));
   }
 
+  async getAuthorByName(name: string): Promise<AuthorDto> {
+    const authorData = await this.authorRepository.findOne({
+      where: { name },
+      relations: ['books']
+    });
+
+    if(!authorData) {
+      throw new NotFoundException(`Não existe um autor cadastrado para o nome: ${name}`);
+    }
+
+    return plainToClass(AuthorDto, authorData);
+  }
+
   async getAuthorById(id: number): Promise<AuthorDto> {
     const authorData = await this.authorRepository.findOne({
       where: { id },

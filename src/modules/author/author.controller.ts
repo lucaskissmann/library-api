@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, HttpCode, Query } from '@nestjs/common';
 import { AuthorService } from './author.service';
-import { Author } from './entities/author.entity';
 import { AuthorDto } from './dtos/author.dto';
 import { CreateAuthorDto } from './dtos/create-author.dto';
 import { UpdateAuthorDto } from './dtos/update-author.dto';
@@ -11,15 +10,15 @@ export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
   @Get()
-  findAll(): Promise<AuthorDto[]> {
-    return this.authorService.findAll();
+  async findAll(@Query('name') name?: string): Promise<AuthorDto[] | AuthorDto> {
+    return this.authorService.findAll(name);
   }
 
   @Get(':id')
   findOne(@Param('id') id: number): Promise<AuthorDto> {
     return this.authorService.findOne(id);
   }
-
+  
   @Get(':id/books')
   async findBooksByAuthor(@Param('id') id: number): Promise<BookDto[]> {
     return this.authorService.findBooksByAuthor(id);
