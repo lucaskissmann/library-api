@@ -4,6 +4,7 @@ import { Author } from './entities/author.entity';
 import { AuthorDto } from './dtos/author.dto';
 import { CreateAuthorDto } from './dtos/create-author.dto';
 import { UpdateAuthorDto } from './dtos/update-author.dto';
+import { BookDto } from '../book/dtos/book.dto';
 
 @Controller('authors')
 export class AuthorController {
@@ -17,6 +18,11 @@ export class AuthorController {
   @Get(':id')
   findOne(@Param('id') id: number): Promise<AuthorDto> {
     return this.authorService.findOne(id);
+  }
+
+  @Get(':id/books')
+  async findBooksByAuthor(@Param('id') id: number): Promise<BookDto[]> {
+    return this.authorService.findBooksByAuthor(id);
   }
 
   @Post()

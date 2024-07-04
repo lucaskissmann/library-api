@@ -6,15 +6,17 @@ import { CreateAuthorDto } from './dtos/create-author.dto';
 import { AuthorDto } from './dtos/author.dto';
 import { UpdateAuthorDto } from './dtos/update-author.dto';
 import { In } from 'typeorm';
+import { BookDto } from '../book/dtos/book.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class AuthorService {
   constructor(private readonly authorRepository: AuthorRepository) {}
-
+  
   async findAll(): Promise<AuthorDto[]> {
     return await this.authorRepository.getAllAuthors();
   }
-
+  
   async findOne(id: number): Promise<AuthorDto> {
     return await this.authorRepository.getAuthorById(id);
   }
@@ -22,11 +24,17 @@ export class AuthorService {
   async findOneByCPF(cpf: string): Promise<Author | undefined> {
     return this.authorRepository.findOne({ where: { cpf }, relations: ['books'] });
   }
-
+  
   async findByIds(ids: number[]): Promise<Author[]> {
     return await this.authorRepository.findBy({ id: In(ids) })
   }
 
+  async findBooksByAuthor(id: number): Promise<BookDto[]> {
+    const author = await this.authorRepository.getAuthorById(id);
+ 
+    return plainToClass(BookDto, author.books);
+  }
+  
   async create(createAuthorDto: CreateAuthorDto): Promise<AuthorDto> {
     createAuthorDto.cpf = createAuthorDto.cpf.replace(/[^\d]+/g, '');
 
