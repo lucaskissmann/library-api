@@ -6,11 +6,12 @@ import { Book } from './entities/book.entity';
 import { IsValidBookState } from 'src/v1/validators/isValidBookState';
 import { BookRepository } from './book.repository';
 import { AuthorModule } from '../author/author.module';
+import { IsValidISBN } from 'src/v1/validators/isValidISBN.constraint';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Book]), AuthorModule],
   controllers: [BookController],
-  providers: [BookService, BookRepository, IsValidBookState],
+  providers: [BookService, BookRepository, IsValidBookState, IsValidISBN],
   exports: [BookService],
 })
 export class BookModule {}

@@ -13,7 +13,11 @@ import { plainToClass } from 'class-transformer';
 export class AuthorService {
   constructor(private readonly authorRepository: AuthorRepository) {}
   
-  async findAll(): Promise<AuthorDto[]> {
+  async findAll(name?: string): Promise<AuthorDto[] | AuthorDto> {
+    if(name) {
+      return await this.authorRepository.getAuthorByName(name);
+    }
+
     return await this.authorRepository.getAllAuthors();
   }
   
@@ -23,6 +27,10 @@ export class AuthorService {
   
   async findOneByCPF(cpf: string): Promise<Author | undefined> {
     return this.authorRepository.findOne({ where: { cpf }, relations: ['books'] });
+  }
+
+  async findOneByName(name: string): Promise<Author | undefined> {
+    return this.authorRepository.findOne({ where: { name }, relations: ['books'] });
   }
   
   async findByIds(ids: number[]): Promise<Author[]> {
@@ -45,9 +53,10 @@ export class AuthorService {
 
   async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<AuthorDto> {
     const author = await this.authorRepository.getAuthorById(id);
-    updateAuthorDto.cpf = updateAuthorDto.cpf.replace(/[^\d]+/g, '');
-
+    
     if(updateAuthorDto.cpf) {
+      updateAuthorDto.cpf = updateAuthorDto.cpf.replace(/[^\d]+/g, '');
+      
       await this.validateCpf(updateAuthorDto.cpf);
     }
 
