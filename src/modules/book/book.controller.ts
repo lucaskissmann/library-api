@@ -12,7 +12,7 @@ export class BookController {
 
   @Get()
   @ApiOperation({ summary: 'Retorna todos os livros' })
-  @ApiQuery({ name: 'state', required: false, description: 'Estado do livro para filtrar' })
+  @ApiQuery({ name: 'state', required: false, description: 'Status do livro para filtrar' })
   @ApiResponse({ status: 200, description: 'Retorna a lista de livros.', type: [BookDto] })
   async findAll(@Query('state') state?: number): Promise<BookDto[]> {
     return this.bookService.findAll(state);
