@@ -5,7 +5,7 @@ import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments,
 @ValidatorConstraint({ name: 'isValidISBN', async: false })
 @Injectable()
 export class IsValidISBN implements ValidatorConstraintInterface {
-  async validate(isbn: string, args: ValidationArguments) {
+  async validate(isbn: string) {
       try {
         const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
         return response.data.totalItems > 0;
@@ -14,7 +14,7 @@ export class IsValidISBN implements ValidatorConstraintInterface {
       }
   }
 
-  defaultMessage(args: ValidationArguments) {
+  defaultMessage() {
     return 'ISBN não é válido!';
   }
 }

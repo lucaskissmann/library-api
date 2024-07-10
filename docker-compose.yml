@@ -1,24 +1,11 @@
-version: '3'
 services:
-  nest-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - db
+  db-mysql:
+    image: mysql:latest
+    container_name: db-mysql
     environment:
-      - NODE_ENV=production
-
-  db:
-    image: "postgres:latest"
-    container_name: db-postgres 
-    environment:
-      POSTGRES_USER: "your_postgres_user"
-      POSTGRES_PASSWORD: "your_postgres_password"
-      POSTGRES_DB: "your_database_name"
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "library_api"
     ports:
-      - "5432:5432"
+      - "3307:3306"
     volumes:
-      - ./data:/var/lib/postgresql/data  # Volume para persistência dos dados do PostgreSQL
+      - ./data/mysql:/var/lib/mysql  # Volume para persistência dos dados do MySQL
