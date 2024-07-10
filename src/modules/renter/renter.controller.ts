@@ -1,33 +1,36 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { RenterService } from './renter.service';
-import { Renter } from './entities/renter.entity';
+import { RenterDto } from './dtos/renter.dto';
+import { UpdateRenterDto } from './dtos/update-renter.dto';
+import { CreateRenterDto } from './dtos/create-renter.dto';
 
 @Controller('renters')
 export class RenterController {
   constructor(private readonly renterService: RenterService) {}
 
   @Get()
-  findAll() {
-    return this.renterService.findAll();
+  async findAll(): Promise<RenterDto[]> {
+    return await this.renterService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.renterService.findOne(id);
+  async findOne(@Param('id') id: number): Promise<RenterDto> {
+    return await this.renterService.findOne(id);
   }
 
   @Post()
-  create(@Body() renter: Renter) {
-    return this.renterService.create(renter);
+  async create(@Body() createRenterDto: CreateRenterDto): Promise<RenterDto> {
+    return await this.renterService.create(createRenterDto);
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() renter: Renter) {
-    return this.renterService.update(id, renter);
+  async update(@Param('id') id: number, @Body() updateRenterDto: UpdateRenterDto): Promise<RenterDto> {
+    return await this.renterService.update(id, updateRenterDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.renterService.remove(id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: number): Promise<void> {
+    return await this.renterService.remove(id);
   }
 }
