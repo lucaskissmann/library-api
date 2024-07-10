@@ -3,10 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookService } from './book.service';
 import { BookController } from './book.controller';
 import { Book } from './entities/book.entity';
-import { IsValidBookState } from 'src/v1/validators/isValidBookState';
+import { IsValidBookState } from 'src/validators/isValidBookState';
 import { BookRepository } from './book.repository';
 import { AuthorModule } from '../author/author.module';
-import { IsValidISBN } from 'src/v1/validators/isValidISBN.constraint';
+import { IsValidISBN } from 'src/validators/isValidISBN.constraint';
 import { RentalModule } from '../rental/rental.module';
 
 @Module({
