@@ -1,8 +1,10 @@
 # Instruções para utilizar a aplicação
 - Na raíz do projeto há um arquivo `docker-compose.yml`, responsável por subir o banco de dados da aplicação. Para executá-lo basta digitar `docker-compose up` no console.
+- Para iniciar a aplicação bastar digitar `npm run start` no console.
 - Também na raíz do projeto, há uma collection do Postman para facilitar a utilização da API. Basta importar o arquivo no Postman.
 - O link para acesso do Swagger é `http://localhost:3000/api`.
 - A aplicação possui testes, para executá-los basta digitar `npm run test` no console.
+- Para executar os testes de performance basta digitar `npm run artillery` no console.
 
 # Geral
 
@@ -40,3 +42,4 @@ A aplicação se trata de um backend para gerenciamento de bibliotecas. Foi dese
 - Docker: Utilizado para containerização do banco de dados.
 - Swagger: Utilizado para documentação da API.
 - Jest: Framework utilizado para os testes.
+- Artillery: Ferramenta utilizada para os testes de performance.
