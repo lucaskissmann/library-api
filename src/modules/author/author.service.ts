@@ -66,7 +66,11 @@ export class AuthorService {
   }
 
   async remove(id: number): Promise<void> {
-	  await this.authorRepository.getAuthorById(id);
+	  const author = await this.authorRepository.getAuthorById(id);
+
+    if(this.isAuthorLinkedToBooks(author)) {
+      throw new ConflictException(`O Autor ${author.name} não pode ser removido pois possui livros associados a ele`);
+    }
 
     await this.authorRepository.delete(id);
   }
@@ -76,5 +80,9 @@ export class AuthorService {
     if (author) {
       throw new ConflictException(`Já existe um autor cadastrado para o CPF '${cpf}'`);
     }
+  }
+
+  isAuthorLinkedToBooks(author: AuthorDto): boolean {
+    return author.books.length > 0;
   }
 }
