@@ -13,7 +13,7 @@ export class CreateBookDto {
     isbn: string;
 
     @IsNotEmpty()
-    @IsDateString()
+    @IsDateString({}, {message: "A data deve estar no formado 'YYYY-MM-DD'"})
     publicationDate: Date;
 
     @IsArray()

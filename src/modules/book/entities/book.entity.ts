@@ -18,7 +18,9 @@ export class Book {
   @IsString()
   isbn: string;
 
-  @Column()
+  @Column({
+    type: 'date',
+  })
   @IsNotEmpty()
   publicationDate: Date;
 

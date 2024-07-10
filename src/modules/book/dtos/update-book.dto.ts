@@ -12,7 +12,7 @@ export class UpdateBookDto {
     @Validate(IsValidISBN)
     isbn: string;
 
-    @IsDateString()
+    @IsDateString({}, {message: "A data deve estar no formado 'YYYY-MM-DD'"})
     @IsOptional()
     publicationDate: Date;
 
