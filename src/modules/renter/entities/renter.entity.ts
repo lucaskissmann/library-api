@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { IsNotEmpty, IsString, IsEmail, IsOptional } from 'class-validator';
+import { Rental } from 'src/modules/rental/entities/rental.entity';
 
 @Entity({name: 'renters'})
 export class Renter {
@@ -26,7 +27,9 @@ export class Renter {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({
+    type: 'date',
+  })
   @IsNotEmpty()
   birthDate: Date;
 
@@ -34,4 +37,7 @@ export class Renter {
   @IsNotEmpty()
   @IsString()
   cpf: string;
+
+  @OneToMany(() => Rental, rental => rental.renter)
+  rentals: Rental[];
 }
