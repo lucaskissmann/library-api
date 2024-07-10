@@ -1,4 +1,4 @@
 export enum BookState {
-    AVAILABLE,
-    UNAVAILABLE,
+    AVAILABLE = 0,
+    UNAVAILABLE = 1,
 }

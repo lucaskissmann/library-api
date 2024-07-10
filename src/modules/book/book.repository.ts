@@ -41,6 +41,18 @@ export class BookRepository extends Repository<Book> {
     return plainToClass(BookDto, bookData);
   }
 
+  async getBooksByState(state: number): Promise<BookDto[]> {
+    const books = await this.bookRepository.find({
+      where: { state },
+      relations: ['authors']
+    });
+    
+    return books.map(book => plainToClass(BookDto, {
+      ...book,
+      authors: book.authors.map(author => plainToClass(AuthorDto, author)),
+    }));
+  }
+
   async createBook(createBookDto: CreateBookDto): Promise<BookDto> {
     const bookEntity = this.bookRepository.create(createBookDto);
     const savedBook = await this.bookRepository.save(bookEntity);

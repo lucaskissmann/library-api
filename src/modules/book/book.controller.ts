@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { BookService } from './book.service';
 import { BookDto } from './dtos/book.dto';
 import { CreateBookDto } from './dtos/create-book.dto';
@@ -9,8 +9,8 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Get()
-  async findAll(): Promise<BookDto[]> {
-    return this.bookService.findAll();
+  async findAll(@Query('state') state?: number): Promise<BookDto[]> {
+    return this.bookService.findAll(state);
   }
 
   @Get(':id')
